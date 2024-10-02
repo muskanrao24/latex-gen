@@ -36,18 +36,22 @@ def make_fix_size(numpy_image, random_resize: bool):
     img = Image.fromarray(np.uint8(numpy_image)).convert('RGB')
 
     if img.size[0] <= RESIZE_W and img.size[1] <= RESIZE_H:
-        background = Image.new('RGBA', (RESIZE_W, RESIZE_H), (255, 255, 255, 255))
+        background = Image.new(
+            'RGBA', (RESIZE_W, RESIZE_H), (255, 255, 255, 255))
 
         if random_resize and random.randint(0, 1) == 0:
-            a = 0.55 * min(math.floor(RESIZE_W / img.size[0]), math.floor(RESIZE_H / img.size[1]))
-            # 
+            a = 0.55 * min(math.floor(RESIZE_W /
+                           img.size[0]), math.floor(RESIZE_H / img.size[1]))
+            #
             coeff = random.uniform(0.8, a if a > 0.8 else 1)
-            img = img.resize((int(img.size[0] * coeff), int(img.size[1] * coeff)))
-        
-        background.paste(img, (int(RESIZE_W / 2) - int(img.size[0] / 2), int(RESIZE_H / 2) - int(img.size[1] / 2)))
+            img = img.resize(
+                (int(img.size[0] * coeff), int(img.size[1] * coeff)))
+
+        background.paste(img, (int(
+            RESIZE_W / 2) - int(img.size[0] / 2), int(RESIZE_H / 2) - int(img.size[1] / 2)))
         return np.array(background)
-        
+
     else:
         # return None
-        print(f"image is too big! w = {img.size[0]} ; h = {img.size[1]}")  # This can't happen
-
+        # This can't happen
+        print(f"image is too big! w = {img.size[0]} ; h = {img.size[1]}")

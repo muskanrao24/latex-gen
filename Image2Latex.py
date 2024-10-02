@@ -15,7 +15,7 @@ TOKENIZER_PATH = "tokenizer.json"
 TMP_IMG_PATH = "tmp.png"
 CAPTION_PATH = "dataset.json"
 DATASET_AMOUNT = 100011
-DATASET_URL = "https://drive.google.com/u/0/uc?export=download&confirm=64GF&id=1dBiNSowXV2MQfpOGFk8jU6m-ll-4Lz9n"
+DATASET_URL = "https://drive.google.com/file/d/1cCVxbaW49dAu3SduDph4Nj8vDDbA5bCn/view?usp=sharing"
 
 
 def use_gpu(turn, gb: int = 4):  # enable or disable GPU backend
@@ -32,8 +32,10 @@ def use_gpu(turn, gb: int = 4):  # enable or disable GPU backend
                 tf.config.experimental.set_virtual_device_configuration(
                     gpus[0],
                     [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=(1024 * gb))])
-                logical_gpus = tf.config.experimental.list_logical_devices('GPU')
-                print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+                logical_gpus = tf.config.experimental.list_logical_devices(
+                    'GPU')
+                print(len(gpus), "Physical GPUs,", len(
+                    logical_gpus), "Logical GPUs")
             except RuntimeError as e:
                 # Virtual devices must be set before GPUs have been initialized
                 print(e)
@@ -68,18 +70,26 @@ def check_path(path):
 
 
 def input_default(inp, val):
-        return val if inp == "" else inp
+    return val if inp == "" else inp
 
 
 def main():
-    argparser = argparse.ArgumentParser(description='The script for using and training model + downloading dataset', add_help=True)
-    argparser.add_argument('--train', action='store_true', help='Call interactable menu')
-    argparser.add_argument('-i', '--image', type=str, default=None, help='Path to LaTeX image')
-    argparser.add_argument('-b', '--bwidth', type=int, default=25, help='Beam width value')
-    argparser.add_argument('-t', '--temperature', type=float, default=0.1, help='TODO')
-    argparser.add_argument('-c', '--clipboard', action='store_true', help='Copy image from clipboard')
-    argparser.add_argument('--compute-threads', type=int, default=6, help='Number of dataset downloading and preprocessing threads')
-    argparser.add_argument('--use-gpu', action='store_true', help='Enable GPU for training (CUDNN installation required)')
+    argparser = argparse.ArgumentParser(
+        description='The script for using and training model + downloading dataset', add_help=True)
+    argparser.add_argument('--train', action='store_true',
+                           help='Call interactable menu')
+    argparser.add_argument('-i', '--image', type=str,
+                           default=None, help='Path to LaTeX image')
+    argparser.add_argument('-b', '--bwidth', type=int,
+                           default=25, help='Beam width value')
+    argparser.add_argument('-t', '--temperature',
+                           type=float, default=0.1, help='TODO')
+    argparser.add_argument(
+        '-c', '--clipboard', action='store_true', help='Copy image from clipboard')
+    argparser.add_argument('--compute-threads', type=int, default=6,
+                           help='Number of dataset downloading and preprocessing threads')
+    argparser.add_argument('--use-gpu', action='store_true',
+                           help='Enable GPU for training (CUDNN installation required)')
     args = argparser.parse_args()
 
     # print(args)
@@ -87,7 +97,6 @@ def main():
         use_gpu(True, 9)
     else:
         use_gpu(False)
-
 
     if args.train:
         print("Training mode enabled")
@@ -103,12 +112,14 @@ def main():
             if os.path.exists(path + CAPTION_PATH):
                 print(f"--Caption file has been detected")
         except:
-            raise IOError("Dataset file is missing! Expected at '{DATASET_PATH}' folder")
-        
+            raise IOError(
+                "Dataset file is missing! Expected at '{DATASET_PATH}' folder")
+
         if os.path.exists(path + IMAGES_PATH) and len(os.listdir(path + IMAGES_PATH)) == DATASET_AMOUNT:
             print("--Dataset images have been detected")
         else:
-            print(f"--Dataset images are missing or damaged. Please download dataset ({DATASET_URL}) and place unzipped images to {path + IMAGES_PATH}")
+            print(
+                f"--Dataset images are missing or damaged. Please download dataset ({DATASET_URL}) and place unzipped images to {path + IMAGES_PATH}")
             return
 
         train()
@@ -122,7 +133,8 @@ def main():
             if all(os.path.exists(path + p) for p in [META_PATH, TOKENIZER_PATH]):
                 print(f"--Meta and Tokenizer files have been detected")
         except:
-            raise IOError("Model files are missing!\nExpected in '{MODEL_PATH}' folder")
+            raise IOError(
+                "Model files are missing!\nExpected in '{MODEL_PATH}' folder")
 
         if args.clipboard:
             try:
@@ -136,7 +148,8 @@ def main():
             else:
                 raise IOError("No input image!")
 
-        predict(im_path, path + TOKENIZER_PATH, path + META_PATH, path + CHECKPOINTS_PATH, beam_width=int(args.bwidth) if int(args.bwidth) > 0 else 25, temperature=args.temperature if 0 < args.temperature <= 1 else 0.1)
+        predict(im_path, path + TOKENIZER_PATH, path + META_PATH, path + CHECKPOINTS_PATH, beam_width=int(args.bwidth)
+                if int(args.bwidth) > 0 else 25, temperature=args.temperature if 0 < args.temperature <= 1 else 0.1)
 
 
 if __name__ == "__main__":
